@@ -16,9 +16,10 @@ int main() {
     char *token = strtok(command, " ");
     if (strcmp(token, "position") == 0) {
       char *fen = strtok(NULL, " ");
-      if (strcmp(fen, "startpos"))
+      char *gamestate = strtok(NULL, "\0");
+      if (strcmp(fen, "startpos") == 0)
         strcpy(fen, startpos);
-      initBoard(fen, command);
+      initBoard(fen, gamestate);
     } else {
       printf("%s", "no");
     }

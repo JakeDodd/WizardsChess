@@ -1,7 +1,6 @@
 #include "board.h"
 #include "../helper/binaryutil.h"
 #include "constants.h"
-#include <stdio.h>
 
 Bitboard piece_bitboards[PIECE_NB];
 char **moves;
@@ -41,12 +40,11 @@ const Bitboard FILES[8] = {
  * is the standard chess start position "startpos" will be sent in place
  * of the fen string
  * */
-void initBoard(char *fen, char *moves) {
+void init_board(char *fen, char *moves) {
+  clear_piece_bitboards();
   short rank = R8;
   short file = FA;
   do {
-    if (*fen == '/') {
-    }
     switch (*fen) {
     case 'r':
       piece_bitboards[B_ROOK] |= (RANKS[rank] & FILES[file]);
@@ -89,12 +87,14 @@ void initBoard(char *fen, char *moves) {
       file = FA - 1;
       break;
     default:
-      if (*fen > 47 && *fen < 57)
-        file += *fen - '0';
       break;
     }
 
-    file++;
+    if (*fen > 47 && *fen < 57) {
+      file += *fen - '0';
+    } else {
+      file++;
+    }
   } while (*fen++);
   piece_bitboards[ALL_PIECES] = get_all_pieces();
 }
@@ -104,4 +104,10 @@ Bitboard get_all_pieces() {
   for (int i = NO_PIECE; i < ALL_PIECES; i++)
     all_pieces |= piece_bitboards[i];
   return all_pieces;
+}
+
+void clear_piece_bitboards() {
+  for (int i = 0; i < PIECE_NB; i++) {
+    piece_bitboards[i] = 0ULL;
+  }
 }
