@@ -1,3 +1,7 @@
+#ifndef Constants_h
+#define Constants_h
+
+extern const char *startpos;
 
 enum pieceType { NO_PIECE_TYPE, PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING };
 
@@ -18,3 +22,9 @@ enum piece {
   ALL_PIECES,
   PIECE_NB
 };
+
+enum rank { R1 = 0, R2, R3, R4, R5, R6, R7, R8 };
+
+enum file { FA = 0, FB, FC, FD, FE, FF, FG, FH };
+
+#endif // !Constants_h
