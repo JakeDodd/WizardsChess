@@ -21,7 +21,7 @@ int main() {
         strcpy(fen, startpos);
       init_board(fen, gamestate);
     } else {
-      printf("%s", "no");
+      printf("%s", token);
     }
   }
   return 0;

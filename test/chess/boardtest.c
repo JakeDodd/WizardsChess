@@ -9,6 +9,7 @@
 
 Bitboard start = 0xFFFF00000000FFFFULL;
 extern Bitboard piece_bitboards[];
+Bitboard custom = 0xBFF720080804F7FDULL;
 
 void test_init_board_startpos() {
   char *moves = "";
@@ -31,6 +32,7 @@ void test_init_board_custom() {
 
   printf("Custom Pos All Pieces:\n" ULL_BINARY_FORMAT,
          ULL_TO_BINARY(piece_bitboards[ALL_PIECES]));
+  assert(piece_bitboards[ALL_PIECES] == custom);
 }
 
 int main() {

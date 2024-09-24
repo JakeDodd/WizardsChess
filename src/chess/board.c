@@ -1,9 +1,12 @@
 #include "board.h"
 #include "../helper/binaryutil.h"
 #include "constants.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 Bitboard piece_bitboards[PIECE_NB];
-char **moves;
+GameState *gs;
 
 const Bitboard RANKS[8] = {0xFFULL,
                            0xFFULL << (8 * 1),
@@ -40,7 +43,7 @@ const Bitboard FILES[8] = {
  * is the standard chess start position "startpos" will be sent in place
  * of the fen string
  * */
-void init_board(char *fen, char *moves) {
+void init_board(char *fen, char *gamestate) {
   clear_piece_bitboards();
   short rank = R8;
   short file = FA;
@@ -97,7 +100,10 @@ void init_board(char *fen, char *moves) {
     }
   } while (*fen++);
   piece_bitboards[ALL_PIECES] = get_all_pieces();
+  init_game_state(gamestate);
 }
+
+// Section for Bitboard related functions
 
 Bitboard get_all_pieces() {
   Bitboard all_pieces = 0;
@@ -113,3 +119,29 @@ void clear_piece_bitboards() {
 }
 
 Bitboard square_bb(enum Square s) { return (1ULL << s); }
+
+enum Square sq_str(char *str) {
+  return 0x80ULL >> (*str - 97) << (8 * (*(str + 1) - '1'));
+}
+
+// Section for GameState related functions
+void init_game_state(char *gs_str) {
+  char *cp = malloc(strlen(gs_str));
+  strcpy(cp, gs_str);
+
+  char *to_move = strtok(cp, " ");
+  char *castling = strtok(NULL, " ");
+  char *en_passant = strtok(NULL, " ");
+
+  char *move_tok = strtok(NULL, " ");
+  char *moves = strtok(NULL, "");
+
+  gs = (GameState *)malloc(sizeof(GameState));
+  gs->white_to_move = *to_move == 'w';
+  gs->castle_rights.B_OO = strstr(castling, "k") != NULL;
+  gs->castle_rights.B_OOO = strstr(castling, "q") != NULL;
+  gs->castle_rights.W_OO = strstr(castling, "K") != NULL;
+  gs->castle_rights.W_OOO = strstr(castling, "Q") != NULL;
+  gs->en_passant_target = *en_passant == '-' ? 0 : sq_str(en_passant);
+  gs->move_list = generate_move_list(moves);
+}
