@@ -10,7 +10,7 @@
  * bit 14-15: promotion piece type knight 0, queen 1 <-- this doesnt allow for
  * promotion to either bishop or rook, have to think about that
  * **/
-typedef int16_t Move;
+typedef uint16_t Move;
 typedef struct MoveList {
   int len;
   Move *moves;
@@ -18,5 +18,4 @@ typedef struct MoveList {
 
 void append_move(Move *move, MoveList *move_list);
 MoveList generate_move_list(char *moves);
-// TODO: implement the above function, also create a utility to print the
-// details of a GameState struct for debugging
+void print_move_list(MoveList movelist);

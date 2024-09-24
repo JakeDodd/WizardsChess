@@ -1,6 +1,7 @@
 #include "board.h"
 #include "../helper/binaryutil.h"
 #include "constants.h"
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -125,6 +126,7 @@ enum Square sq_str(char *str) {
 }
 
 // Section for GameState related functions
+
 void init_game_state(char *gs_str) {
   char *cp = malloc(strlen(gs_str));
   strcpy(cp, gs_str);
@@ -136,7 +138,9 @@ void init_game_state(char *gs_str) {
   char *move_tok = strtok(NULL, " ");
   char *moves = strtok(NULL, "");
 
-  gs = (GameState *)malloc(sizeof(GameState));
+  assert(strcmp(move_tok, "move") == 0);
+
+  gs = malloc(sizeof(*gs));
   gs->white_to_move = *to_move == 'w';
   gs->castle_rights.B_OO = strstr(castling, "k") != NULL;
   gs->castle_rights.B_OOO = strstr(castling, "q") != NULL;
@@ -144,4 +148,15 @@ void init_game_state(char *gs_str) {
   gs->castle_rights.W_OOO = strstr(castling, "Q") != NULL;
   gs->en_passant_target = *en_passant == '-' ? 0 : sq_str(en_passant);
   gs->move_list = generate_move_list(moves);
+  print_game_state();
+}
+
+void print_game_state() {
+  printf("Turn to move is: %s\n", gs->white_to_move ? "white" : "black");
+  printf("Black can castle: %s %s\n", gs->castle_rights.B_OO ? "k" : "",
+         gs->castle_rights.B_OOO ? "q" : "");
+  printf("White can castle: %s %s\n", gs->castle_rights.W_OO ? "k" : "",
+         gs->castle_rights.W_OOO ? "q" : "");
+  printf("The en passant target is: %d\n", gs->en_passant_target);
+  print_move_list(gs->move_list);
 }

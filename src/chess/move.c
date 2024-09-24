@@ -1,5 +1,6 @@
 #include "move.h"
 #include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -10,4 +11,28 @@ void append_move(Move *move, MoveList *move_list) {
   memcpy(&new_moves[move_list->len], move, 1);
   move_list->moves = new_moves;
   move_list->len += 1;
+}
+
+MoveList generate_move_list(char *moves) {
+  char *cpy = malloc(512 * sizeof(char));
+  strcpy(cpy, moves);
+
+  MoveList movelist;
+  movelist.len = 0;
+  movelist.moves = malloc(sizeof(Move) * 0);
+  char *m = strtok(cpy, " ");
+  do {
+    int src = ((*m - 96) + ((*(m + 1) - '1') * 8));
+    int dest = ((*(m + 2) - 96) + ((*(m + 3) - '1') * 8));
+    Move move = src | (dest << 6);
+    append_move(&move, &movelist);
+  } while ((m = strtok(NULL, " ")) != NULL);
+  return movelist;
+}
+
+void print_move_list(MoveList movelist) {
+  for (int i = 0; i < movelist.len; i++) {
+    printf("src sq: %d\n", *(movelist.moves + i) & 0x3F);
+    printf("dest sq: %d\n", *(movelist.moves + i) >> 6);
+  }
 }

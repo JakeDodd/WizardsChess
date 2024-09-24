@@ -35,3 +35,4 @@ enum Square sq_str(char *str);
 // Game State related functions
 
 void init_game_state(char *gs_str);
+void print_game_state();
