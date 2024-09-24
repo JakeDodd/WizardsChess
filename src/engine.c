@@ -19,7 +19,7 @@ int main() {
       char *gamestate = strtok(NULL, "\0");
       if (strcmp(fen, "startpos") == 0)
         strcpy(fen, startpos);
-      initBoard(fen, gamestate);
+      init_board(fen, gamestate);
     } else {
       printf("%s", "no");
     }
