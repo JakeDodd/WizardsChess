@@ -111,3 +111,5 @@ void clear_piece_bitboards() {
     piece_bitboards[i] = 0ULL;
   }
 }
+
+Bitboard square_bb(enum Square s) { return (1ULL << s); }
