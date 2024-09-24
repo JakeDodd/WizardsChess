@@ -1,3 +1,5 @@
+CC=gcc
+CFLAGS=-g -Wall -Wextra -pedantic
 
-WizardsChess: src/engine.c 
-	$(CC) src/engine.c src/chess/board.c src/chess/constants.c -o wizardschess -g -Wall -Wextra -pedantic
+WizardsChess: src/engine.o src/chess/board.o src/chess/constants.o
+	$(CC) src/engine.o src/chess/board.o src/chess/constants.o -o wizardschess
