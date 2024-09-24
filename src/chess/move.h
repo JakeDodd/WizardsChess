@@ -1,3 +1,5 @@
+#ifndef Move_h
+#define Move_h
 
 #include <stdint.h>
 #include <stdio.h>
@@ -19,3 +21,5 @@ typedef struct MoveList {
 void append_move(Move *move, MoveList *move_list);
 MoveList generate_move_list(char *moves);
 void print_move_list(MoveList movelist);
+
+#endif

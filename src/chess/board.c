@@ -122,7 +122,7 @@ void clear_piece_bitboards() {
 Bitboard square_bb(enum Square s) { return (1ULL << s); }
 
 enum Square sq_str(char *str) {
-  return 0x80ULL >> (*str - 97) << (8 * (*(str + 1) - '1'));
+  return ((*str - 96) + ((*(str + 1) - '1') * 8));
 }
 
 // Section for GameState related functions
@@ -138,7 +138,7 @@ void init_game_state(char *gs_str) {
   char *move_tok = strtok(NULL, " ");
   char *moves = strtok(NULL, "");
 
-  assert(strcmp(move_tok, "move") == 0);
+  assert(strcmp(move_tok, "moves") == 0);
 
   gs = malloc(sizeof(*gs));
   gs->white_to_move = *to_move == 'w';

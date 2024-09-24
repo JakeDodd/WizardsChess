@@ -1,14 +1,15 @@
 #include "move.h"
+#include "board.h"
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 void append_move(Move *move, MoveList *move_list) {
-  Move *new_moves = realloc(move_list->moves, 1);
+  Move *new_moves = realloc(move_list->moves, move_list->len + 1);
   if (new_moves == NULL)
     return;
-  memcpy(&new_moves[move_list->len], move, 1);
+  new_moves[move_list->len] = *move;
   move_list->moves = new_moves;
   move_list->len += 1;
 }
@@ -19,11 +20,11 @@ MoveList generate_move_list(char *moves) {
 
   MoveList movelist;
   movelist.len = 0;
-  movelist.moves = malloc(sizeof(Move) * 0);
+  movelist.moves = NULL;
   char *m = strtok(cpy, " ");
   do {
-    int src = ((*m - 96) + ((*(m + 1) - '1') * 8));
-    int dest = ((*(m + 2) - 96) + ((*(m + 3) - '1') * 8));
+    uint16_t src = sq_str(m);
+    uint16_t dest = sq_str(m + 2);
     Move move = src | (dest << 6);
     append_move(&move, &movelist);
   } while ((m = strtok(NULL, " ")) != NULL);
@@ -32,7 +33,7 @@ MoveList generate_move_list(char *moves) {
 
 void print_move_list(MoveList movelist) {
   for (int i = 0; i < movelist.len; i++) {
-    printf("src sq: %d\n", *(movelist.moves + i) & 0x3F);
+    printf("src sq: %d\n", *(movelist.moves + i) & 0x003F);
     printf("dest sq: %d\n", *(movelist.moves + i) >> 6);
   }
 }

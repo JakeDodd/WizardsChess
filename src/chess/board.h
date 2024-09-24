@@ -18,7 +18,7 @@ typedef struct GameState {
   bool white_to_move;
   MoveList move_list;
   CastleRights castle_rights;
-  int8_t en_passant_target;
+  enum Square en_passant_target;
 } GameState;
 
 // Bitboard related functions
