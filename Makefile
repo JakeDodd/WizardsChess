@@ -15,4 +15,4 @@ $(BDIR)/wizardschess: $(OBJ)
 .PHONY: clean
 
 clean:
-	rm $(BDIR)/wizardschess $(OBJ)
+	rm $(OBJ)
