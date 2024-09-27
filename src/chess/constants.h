@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 extern const char *startpos;
+extern const char *startstate;
 
 enum pieceType { NO_PIECE_TYPE, PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING };
 

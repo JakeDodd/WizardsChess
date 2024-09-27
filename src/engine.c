@@ -2,6 +2,7 @@
 #include "chess/board.h"
 #include "chess/constants.h"
 #include "helper/binaryutil.h"
+#include "helper/stringutil.h"
 #include <pthread.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -38,12 +39,14 @@ int main() {
       printf("you still need to implement this jake\n");
     } else if (strcmp(token, "position") == 0) {
       char *fen = strtok(NULL, " ");
-      char *gamestate = strtok(NULL, "\0");
+      if (strcmp(fen, "startpos") == 0) {
+        strcpy(fen, startpos);
+      }
+      char *gamestate = malloc(512 * sizeof(char));
+      gamestate = strtok(NULL, "\0");
       // TODO there is a bug in init_board when startpos is passed, usually we
       // are expecting game state string to have everything, in this case it
       // only has the moves
-      if (strcmp(fen, "startpos") == 0)
-        strcpy(fen, startpos);
       init_board(fen, gamestate);
     } else {
       int err = pthread_create(&search_thread, NULL, wait, NULL);

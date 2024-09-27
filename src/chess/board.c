@@ -1,6 +1,7 @@
 #include "board.h"
 #include "../helper/binaryutil.h"
 #include "constants.h"
+#include "move.h"
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -147,7 +148,7 @@ void init_game_state(char *gs_str) {
   gs->castle_rights.W_OO = strstr(castling, "K") != NULL;
   gs->castle_rights.W_OOO = strstr(castling, "Q") != NULL;
   gs->en_passant_target = *en_passant == '-' ? 0 : sq_str(en_passant);
-  gs->move_list = generate_move_list(moves);
+  gs->move_list = parse_move_list(moves);
   print_game_state();
 }
 

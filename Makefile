@@ -1,7 +1,7 @@
 CC=gcc
 CFLAGS=-g -Wall -Wextra -pedantic
-DEPS = src/engine.h src/chess/board.h src/chess/constants.h src/chess/move.h
-OBJ = src/engine.o src/chess/board.o src/chess/constants.o src/chess/move.o
+DEPS = src/engine.h src/chess/board.h src/chess/constants.h src/chess/move.h src/helper/stringutil.h
+OBJ = src/engine.o src/chess/board.o src/chess/constants.o src/chess/move.o src/helper/stringutil.o
 
 BDIR=build
 

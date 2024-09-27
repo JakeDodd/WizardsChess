@@ -14,7 +14,7 @@ void append_move(Move *move, MoveList *move_list) {
   move_list->len += 1;
 }
 
-MoveList generate_move_list(char *moves) {
+MoveList parse_move_list(char *moves) {
   char *cpy = malloc(512 * sizeof(char));
   strcpy(cpy, moves);
 
