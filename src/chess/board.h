@@ -1,25 +1,12 @@
-#include "constants.h"
-#include "move.h"
-#include <stdbool.h>
+#pragma once
+#ifndef Board_h
+#define Board_h
 
-typedef unsigned long Bitboard;
+#include "../helper/binaryutil.h"
+#include "constants.h"
 
 extern const Bitboard RANKS[8];
 extern const Bitboard FILES[8];
-
-typedef struct CastleRights {
-  bool W_OO;
-  bool W_OOO;
-  bool B_OOO;
-  bool B_OO;
-} CastleRights;
-
-typedef struct GameState {
-  bool white_to_move;
-  MoveList move_list;
-  CastleRights castle_rights;
-  enum Square en_passant_target;
-} GameState;
 
 // Bitboard related functions
 
@@ -31,8 +18,14 @@ Bitboard square_bb(enum Square s);
 // Square related functions
 
 enum Square sq_str(char *str);
+enum Square lsb(Bitboard b);
+enum Square pop_lsb(Bitboard *b);
+enum file to_file(enum Square s);
+enum rank to_rank(enum Square s);
 
 // Game State related functions
 
 void init_game_state(char *gs_str);
 void print_game_state();
+
+#endif // !Board_h

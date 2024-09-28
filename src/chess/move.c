@@ -1,17 +1,48 @@
 #include "move.h"
 #include "board.h"
+#include "constants.h"
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-void append_move(Move *move, MoveList *move_list) {
+const int knightmoves[] = {-17, -15, -10, -6, 6, 10, 15, 17};
+
+void append_move(Move move, MoveList *move_list) {
   Move *new_moves = realloc(move_list->moves, move_list->len + 1);
   if (new_moves == NULL)
     return;
-  new_moves[move_list->len] = *move;
+  new_moves[move_list->len] = move;
   move_list->moves = new_moves;
   move_list->len += 1;
+}
+
+Bitboard valid_move(enum Square from, int move) {
+  int dest = from + move;
+  return (dest >= A1 && dest <= H8) &&
+                 max(abs((int)(to_rank(dest) - to_rank(from))),
+                     abs((int)(to_file(dest) - to_file(from)))) <= 2
+             ? square_bb(dest)
+             : 0;
+}
+
+Move create_move(enum Square from, enum Square to) { return to << 6 | from; }
+
+void generate_pseudo_legal_knight_moves(bool color, Bitboard empty_or_emeny,
+                                        Bitboard knights, MoveList *moves) {
+  while (knights) {
+    enum Square from = pop_lsb(&knights);
+    Bitboard attacks = 0;
+    for (int i = 0; i < 8; i++) {
+      attacks |= valid_move(from, knightmoves[i]);
+    }
+    attacks &= empty_or_emeny;
+    while (attacks) {
+      enum Square to = pop_lsb(&attacks);
+      append_move(create_move(from, to), moves);
+    }
+  }
 }
 
 MoveList parse_move_list(char *moves) {
@@ -26,7 +57,7 @@ MoveList parse_move_list(char *moves) {
     uint16_t src = sq_str(m);
     uint16_t dest = sq_str(m + 2);
     Move move = src | (dest << 6);
-    append_move(&move, &movelist);
+    append_move(move, &movelist);
   } while ((m = strtok(NULL, " ")) != NULL);
   return movelist;
 }
@@ -37,3 +68,20 @@ void print_move_list(MoveList movelist) {
     printf("dest sq: %d\n", *(movelist.moves + i) >> 6);
   }
 }
+
+/*
+ *
+ * 57 58 59 60 61 62 63 64
+ * 49 50 51 52 53 54 55 56
+ * 41 42 43 44 45 46 47 48
+ * 33 34 35 36 37 38 39 40
+ * 25 26 27 28 29 30 31 32
+ * 17 18 19 20 21 22 23 24
+ *  9 10 11 12 13 14 15 16
+ *  1  2  3  4  5  6  7  8
+ *
+ * 000000
+ *
+ *
+ *
+ * */

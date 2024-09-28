@@ -39,15 +39,16 @@ int main() {
       printf("you still need to implement this jake\n");
     } else if (strcmp(token, "position") == 0) {
       char *fen = strtok(NULL, " ");
-      if (strcmp(fen, "startpos") == 0) {
-        strcpy(fen, startpos);
-      }
+      char *fenstring = malloc(512 * sizeof(char));
+      strcpy(fenstring, fen);
       char *gamestate = malloc(512 * sizeof(char));
-      gamestate = strtok(NULL, "\0");
-      // TODO there is a bug in init_board when startpos is passed, usually we
-      // are expecting game state string to have everything, in this case it
-      // only has the moves
-      init_board(fen, gamestate);
+      char *gs = strtok(NULL, "\0");
+      if (strcmp(fenstring, "startpos") == 0) {
+        strcpy(fenstring, startpos);
+        strcpy(gamestate, startstate);
+      }
+      strcat(gamestate, gs);
+      init_board(fenstring, gamestate);
     } else {
       int err = pthread_create(&search_thread, NULL, wait, NULL);
       printf("I dont support your command yet loser\n");

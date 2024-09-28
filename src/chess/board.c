@@ -1,8 +1,8 @@
 #include "board.h"
-#include "../helper/binaryutil.h"
 #include "constants.h"
 #include "move.h"
 #include <assert.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -103,6 +103,12 @@ void init_board(char *fen, char *gamestate) {
   } while (*fen++);
   piece_bitboards[ALL_PIECES] = get_all_pieces();
   init_game_state(gamestate);
+  Bitboard B_pieces = piece_bitboards[B_PAWN] | piece_bitboards[B_QUEEN] |
+                      piece_bitboards[B_ROOK] | piece_bitboards[B_BISHOP] |
+                      piece_bitboards[B_KNIGHT];
+  MoveList moves;
+  generate_pseudo_legal_knight_moves(true, B_pieces, piece_bitboards[W_KNIGHT],
+                                     &moves);
 }
 
 // Section for Bitboard related functions
@@ -125,6 +131,22 @@ Bitboard square_bb(enum Square s) { return (1ULL << s); }
 enum Square sq_str(char *str) {
   return ((*str - 96) + ((*(str + 1) - '1') * 8));
 }
+
+enum Square pop_lsb(Bitboard *b) {
+  enum Square s = lsb(*b);
+  *b &= *b - 1;
+  return s;
+}
+
+enum Square lsb(Bitboard b) {
+  // This only works on GNU
+  // Will not work on Windows!!
+  return __builtin_ctzll(b);
+}
+
+enum file to_file(enum Square s) { return s & 7; }
+
+enum rank to_rank(enum Square s) { return s >> 3; }
 
 // Section for GameState related functions
 

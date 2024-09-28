@@ -1,7 +1,12 @@
+#pragma once
 #ifndef Constants_h
 #define Constants_h
 
+#include <stdbool.h>
 #include <stdint.h>
+
+#define max(x, y) (((x) >= (y)) ? (x) : (y))
+
 extern const char *startpos;
 extern const char *startstate;
 
@@ -95,5 +100,35 @@ enum Square {
   G8,
   H8
 };
+
+/**
+ * We store the information for a move in 16 bits
+ * bit 0-5: origination square
+ * bit 6-11: destination square
+ * bit 12-13: special moves: promotion 0, en passant 1, castling 2
+ * bit 14-15: promotion piece type knight 0, queen 1 <-- this doesnt allow for
+ * promotion to either bishop or rook, have to think about that
+ * **/
+typedef uint16_t Move;
+typedef struct MoveList {
+  int len;
+  Move *moves;
+} MoveList;
+
+typedef unsigned long Bitboard;
+
+typedef struct CastleRights {
+  bool W_OO;
+  bool W_OOO;
+  bool B_OOO;
+  bool B_OO;
+} CastleRights;
+
+typedef struct GameState {
+  bool white_to_move;
+  MoveList move_list;
+  CastleRights castle_rights;
+  enum Square en_passant_target;
+} GameState;
 
 #endif // !Constants_h
