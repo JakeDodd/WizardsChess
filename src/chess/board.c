@@ -107,8 +107,15 @@ void init_board(char *fen, char *gamestate) {
                       piece_bitboards[B_ROOK] | piece_bitboards[B_BISHOP] |
                       piece_bitboards[B_KNIGHT];
   MoveList moves;
-  generate_pseudo_legal_knight_moves(true, B_pieces, piece_bitboards[W_KNIGHT],
-                                     &moves);
+  moves.len = 0;
+  moves.moves = NULL;
+  generate_pseudo_legal_knight_moves(B_pieces | ~piece_bitboards[ALL_PIECES],
+                                     piece_bitboards[W_KNIGHT], &moves);
+  MoveList kingmoves;
+  kingmoves.len = 0;
+  kingmoves.moves = NULL;
+  generate_pseudo_legal_king_moves(B_pieces | ~piece_bitboards[ALL_PIECES],
+                                   piece_bitboards[W_KING], &kingmoves);
 }
 
 // Section for Bitboard related functions

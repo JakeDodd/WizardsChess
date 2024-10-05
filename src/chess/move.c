@@ -1,4 +1,5 @@
 #include "move.h"
+#include "../helper/binaryutil.h"
 #include "board.h"
 #include "constants.h"
 #include <stdbool.h>
@@ -8,6 +9,7 @@
 #include <string.h>
 
 const int knightmoves[] = {-17, -15, -10, -6, 6, 10, 15, 17};
+const int kingmoves[] = {-9, -8, -7, -1, 1, 7, 8, 9};
 
 void append_move(Move move, MoveList *move_list) {
   Move *new_moves = realloc(move_list->moves, move_list->len + 1);
@@ -29,7 +31,7 @@ Bitboard valid_move(enum Square from, int move) {
 
 Move create_move(enum Square from, enum Square to) { return to << 6 | from; }
 
-void generate_pseudo_legal_knight_moves(bool color, Bitboard empty_or_emeny,
+void generate_pseudo_legal_knight_moves(Bitboard empty_or_emeny,
                                         Bitboard knights, MoveList *moves) {
   while (knights) {
     enum Square from = pop_lsb(&knights);
@@ -43,6 +45,22 @@ void generate_pseudo_legal_knight_moves(bool color, Bitboard empty_or_emeny,
       append_move(create_move(from, to), moves);
     }
   }
+  printf("knight moves %d\n", moves->len);
+}
+
+void generate_pseudo_legal_king_moves(Bitboard empty_or_enemy, Bitboard king,
+                                      MoveList *moves) {
+  enum Square from = pop_lsb(&king);
+  Bitboard attacks = 0;
+  for (int i = 0; i < 8; i++) {
+    attacks |= valid_move(from, kingmoves[i]);
+  }
+  attacks &= empty_or_enemy;
+  while (attacks) {
+    enum Square to = pop_lsb(&attacks);
+    append_move(create_move(from, to), moves);
+  }
+  printf("king moves %d\n", moves->len);
 }
 
 MoveList parse_move_list(char *moves) {
