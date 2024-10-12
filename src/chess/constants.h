@@ -10,7 +10,18 @@
 extern const char *startpos;
 extern const char *startstate;
 
-enum pieceType { NO_PIECE_TYPE, PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING };
+enum color { WHITE, BLACK, COLORS };
+
+enum pieceType {
+  NO_PIECE_TYPE,
+  PAWN,
+  KNIGHT,
+  BISHOP,
+  ROOK,
+  QUEEN,
+  KING,
+  PIECES
+};
 
 enum piece {
   NO_PIECE,
@@ -125,10 +136,11 @@ typedef struct CastleRights {
 } CastleRights;
 
 typedef struct GameState {
-  bool white_to_move;
+  enum color turn_to_move;
   MoveList move_list;
   CastleRights castle_rights;
   enum Square en_passant_target;
+  Bitboard board[COLORS][PIECES];
 } GameState;
 
 #endif // !Constants_h

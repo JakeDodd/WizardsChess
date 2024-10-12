@@ -103,19 +103,6 @@ void init_board(char *fen, char *gamestate) {
   } while (*fen++);
   piece_bitboards[ALL_PIECES] = get_all_pieces();
   init_game_state(gamestate);
-  Bitboard B_pieces = piece_bitboards[B_PAWN] | piece_bitboards[B_QUEEN] |
-                      piece_bitboards[B_ROOK] | piece_bitboards[B_BISHOP] |
-                      piece_bitboards[B_KNIGHT];
-  MoveList moves;
-  moves.len = 0;
-  moves.moves = NULL;
-  generate_pseudo_legal_knight_moves(B_pieces | ~piece_bitboards[ALL_PIECES],
-                                     piece_bitboards[W_KNIGHT], &moves);
-  MoveList kingmoves;
-  kingmoves.len = 0;
-  kingmoves.moves = NULL;
-  generate_pseudo_legal_king_moves(B_pieces | ~piece_bitboards[ALL_PIECES],
-                                   piece_bitboards[W_KING], &kingmoves);
 }
 
 // Section for Bitboard related functions
@@ -171,7 +158,7 @@ void init_game_state(char *gs_str) {
   assert(strcmp(move_tok, "moves") == 0);
 
   gs = malloc(sizeof(*gs));
-  gs->white_to_move = *to_move == 'w';
+  gs->turn_to_move = *to_move == 'w' ? WHITE : BLACK;
   gs->castle_rights.B_OO = strstr(castling, "k") != NULL;
   gs->castle_rights.B_OOO = strstr(castling, "q") != NULL;
   gs->castle_rights.W_OO = strstr(castling, "K") != NULL;
@@ -182,11 +169,11 @@ void init_game_state(char *gs_str) {
 }
 
 void print_game_state() {
-  printf("Turn to move is: %s\n", gs->white_to_move ? "white" : "black");
+  printf("Turn to move is: %s\n",
+         gs->turn_to_move == WHITE ? "white" : "black");
   printf("Black can castle: %s %s\n", gs->castle_rights.B_OO ? "k" : "",
          gs->castle_rights.B_OOO ? "q" : "");
   printf("White can castle: %s %s\n", gs->castle_rights.W_OO ? "k" : "",
          gs->castle_rights.W_OOO ? "q" : "");
   printf("The en passant target is: %d\n", gs->en_passant_target);
-  print_move_list(gs->move_list);
 }
