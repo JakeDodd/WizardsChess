@@ -7,7 +7,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-Bitboard piece_bitboards[PIECE_NB];
 GameState *gs;
 
 const Bitboard RANKS[8] = {0xFFULL,
@@ -52,40 +51,40 @@ void init_board(char *fen, char *gamestate) {
   do {
     switch (*fen) {
     case 'r':
-      piece_bitboards[B_ROOK] |= (RANKS[rank] & FILES[file]);
+      gs->board[BLACK][ROOK] |= (RANKS[rank] & FILES[file]);
       break;
     case 'n':
-      piece_bitboards[B_KNIGHT] |= (RANKS[rank] & FILES[file]);
+      gs->board[BLACK][KNIGHT] |= (RANKS[rank] & FILES[file]);
       break;
     case 'b':
-      piece_bitboards[B_BISHOP] |= (RANKS[rank] & FILES[file]);
+      gs->board[BLACK][BISHOP] |= (RANKS[rank] & FILES[file]);
       break;
     case 'k':
-      piece_bitboards[B_KING] |= (RANKS[rank] & FILES[file]);
+      gs->board[BLACK][KING] |= (RANKS[rank] & FILES[file]);
       break;
     case 'q':
-      piece_bitboards[B_QUEEN] |= (RANKS[rank] & FILES[file]);
+      gs->board[BLACK][QUEEN] |= (RANKS[rank] & FILES[file]);
       break;
     case 'p':
-      piece_bitboards[B_PAWN] |= (RANKS[rank] & FILES[file]);
+      gs->board[BLACK][PAWN] |= (RANKS[rank] & FILES[file]);
       break;
     case 'R':
-      piece_bitboards[W_ROOK] |= (RANKS[rank] & FILES[file]);
+      gs->board[WHITE][ROOK] |= (RANKS[rank] & FILES[file]);
       break;
     case 'N':
-      piece_bitboards[W_KNIGHT] |= (RANKS[rank] & FILES[file]);
+      gs->board[WHITE][KNIGHT] |= (RANKS[rank] & FILES[file]);
       break;
     case 'B':
-      piece_bitboards[W_BISHOP] |= (RANKS[rank] & FILES[file]);
+      gs->board[WHITE][BISHOP] |= (RANKS[rank] & FILES[file]);
       break;
     case 'K':
-      piece_bitboards[W_KING] |= (RANKS[rank] & FILES[file]);
+      gs->board[WHITE][KING] |= (RANKS[rank] & FILES[file]);
       break;
     case 'Q':
-      piece_bitboards[W_QUEEN] |= (RANKS[rank] & FILES[file]);
+      gs->board[WHITE][QUEEN] |= (RANKS[rank] & FILES[file]);
       break;
     case 'P':
-      piece_bitboards[W_PAWN] |= (RANKS[rank] & FILES[file]);
+      gs->board[WHITE][PAWN] |= (RANKS[rank] & FILES[file]);
       break;
     case '/':
       rank--;
@@ -101,22 +100,48 @@ void init_board(char *fen, char *gamestate) {
       file++;
     }
   } while (*fen++);
-  piece_bitboards[ALL_PIECES] = get_all_pieces();
+
   init_game_state(gamestate);
 }
 
 // Section for Bitboard related functions
 
-Bitboard get_all_pieces() {
-  Bitboard all_pieces = 0;
-  for (int i = NO_PIECE; i < ALL_PIECES; i++)
-    all_pieces |= piece_bitboards[i];
-  return all_pieces;
+void print_board() {
+  char *ascii_board = malloc(1000 * sizeof(char));
+  strcat(ascii_board, "+---+---+---+---+---+---+---+---+\n");
+  for (int rank = 0; rank <= R8; rank++) {
+    for (int file = 0; file <= FH; file++) {
+      enum Square sq = rank * 8 + file;
+      char piece = get_piece(sq);
+      char ascii_piece[4] = "|   ";
+      ascii_piece[2] = piece;
+      strcat(ascii_board, ascii_piece);
+    }
+    strcat(ascii_board, "|\n+---+---+---+---+---+---+---+---+\n");
+  }
+}
+
+char get_piece(enum Square sq) {
+  char p = ' ';
+  for (int color = 0; c < COLORS; color++) {
+    for (int piece = 0; p < PIECES; piece++) {
+      if (square_bb(sq) & gs->board[color][piece]) {
+        switch (piece) {
+        case PAWN:
+          p = color == WHITE ? 'P' : 'p';
+          break;
+        case KNIGHT:
+        }
+      }
+    }
+  }
 }
 
 void clear_piece_bitboards() {
-  for (int i = 0; i < PIECE_NB; i++) {
-    piece_bitboards[i] = 0ULL;
+  for (int p = 0; p < PIECE_NB; p++) {
+    for (int c = 0; c < COLORS; c++) {
+      gs->board[c][p] = 0ULL;
+    }
   }
 }
 

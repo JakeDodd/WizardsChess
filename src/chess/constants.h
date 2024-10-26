@@ -45,6 +45,17 @@ enum rank { R1 = 0, R2, R3, R4, R5, R6, R7, R8 };
 
 enum file { FA = 0, FB, FC, FD, FE, FF, FG, FH };
 
+enum Direction {
+  NORTH = 8,
+  EAST = 1,
+  SOUTH = -8,
+  WEST = -1,
+  NORTHEAST = NORTH + EAST,
+  NORTHWEST = NORTH + WEST,
+  SOUTHEAST = SOUTH + EAST,
+  SOUTHWEST = SOUTH + WEST
+};
+
 enum Square {
   A1,
   B1,

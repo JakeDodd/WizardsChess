@@ -31,6 +31,10 @@ Bitboard valid_move(enum Square from, int move) {
 
 Move create_move(enum Square from, enum Square to) { return to << 6 | from; }
 
+void generate_pseudo_legal_pawn_moves(GameState *gs, Bitboard pawns,
+                                      Bitboard empty_or_enemy,
+                                      MoveList *moves) {}
+
 void generate_pseudo_legal_knight_moves(Bitboard empty_or_emeny,
                                         Bitboard knights, MoveList *moves) {
   while (knights) {
