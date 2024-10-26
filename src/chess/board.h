@@ -10,6 +10,8 @@ extern const Bitboard FILES[8];
 
 // Bitboard related functions
 
+void print_board();
+char get_piece(enum Square sq);
 void init_board(char *fen, char *gamestate);
 void clear_piece_bitboards();
 Bitboard get_all_pieces();

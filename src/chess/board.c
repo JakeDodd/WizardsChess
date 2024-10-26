@@ -45,6 +45,7 @@ const Bitboard FILES[8] = {
  * of the fen string
  * */
 void init_board(char *fen, char *gamestate) {
+  gs = (GameState *)calloc(1, sizeof(GameState));
   clear_piece_bitboards();
   short rank = R8;
   short file = FA;
@@ -101,16 +102,17 @@ void init_board(char *fen, char *gamestate) {
     }
   } while (*fen++);
 
+  print_board();
   init_game_state(gamestate);
 }
 
 // Section for Bitboard related functions
 
 void print_board() {
-  char *ascii_board = malloc(1000 * sizeof(char));
+  char *ascii_board = (char *)calloc(1000, sizeof(char));
   strcat(ascii_board, "+---+---+---+---+---+---+---+---+\n");
-  for (int rank = 0; rank <= R8; rank++) {
-    for (int file = 0; file <= FH; file++) {
+  for (int rank = R8; rank >= 0; rank--) {
+    for (int file = FH; file >= 0; file--) {
       enum Square sq = rank * 8 + file;
       char piece = get_piece(sq);
       char ascii_piece[4] = "|   ";
@@ -119,30 +121,59 @@ void print_board() {
     }
     strcat(ascii_board, "|\n+---+---+---+---+---+---+---+---+\n");
   }
+  printf("%s", ascii_board);
+  free(ascii_board);
 }
 
 char get_piece(enum Square sq) {
   char p = ' ';
-  for (int color = 0; c < COLORS; color++) {
-    for (int piece = 0; p < PIECES; piece++) {
+  for (int color = 0; color < COLORS; color++) {
+    for (int piece = 0; piece < PIECES; piece++) {
       if (square_bb(sq) & gs->board[color][piece]) {
         switch (piece) {
         case PAWN:
           p = color == WHITE ? 'P' : 'p';
           break;
         case KNIGHT:
+          p = color == WHITE ? 'N' : 'n';
+          break;
+        case BISHOP:
+          p = color == WHITE ? 'B' : 'b';
+          break;
+        case ROOK:
+          p = color == WHITE ? 'R' : 'r';
+          break;
+        case QUEEN:
+          p = color == WHITE ? 'Q' : 'q';
+          break;
+        case KING:
+          p = color == WHITE ? 'K' : 'k';
+          break;
+        default:
+          break;
         }
       }
     }
   }
+  return p;
 }
 
 void clear_piece_bitboards() {
-  for (int p = 0; p < PIECE_NB; p++) {
+  for (int p = 0; p < PIECES; p++) {
     for (int c = 0; c < COLORS; c++) {
       gs->board[c][p] = 0ULL;
     }
   }
+}
+
+Bitboard get_all_pieces() {
+  Bitboard all = gs->board[WHITE][PAWN] | gs->board[WHITE][KNIGHT] |
+                 gs->board[WHITE][BISHOP] | gs->board[WHITE][ROOK] |
+                 gs->board[WHITE][QUEEN] | gs->board[WHITE][KING] |
+                 gs->board[BLACK][PAWN] | gs->board[BLACK][KNIGHT] |
+                 gs->board[BLACK][BISHOP] | gs->board[BLACK][ROOK] |
+                 gs->board[BLACK][QUEEN] | gs->board[BLACK][KING];
+  return all;
 }
 
 Bitboard square_bb(enum Square s) { return (1ULL << s); }
@@ -182,7 +213,6 @@ void init_game_state(char *gs_str) {
 
   assert(strcmp(move_tok, "moves") == 0);
 
-  gs = malloc(sizeof(*gs));
   gs->turn_to_move = *to_move == 'w' ? WHITE : BLACK;
   gs->castle_rights.B_OO = strstr(castling, "k") != NULL;
   gs->castle_rights.B_OOO = strstr(castling, "q") != NULL;
