@@ -43,12 +43,29 @@ void generate_pseudo_legal_pawn_moves(GameState *gs, Bitboard pawns,
     enum Square from = pop_lsb(&pawns);
     Bitboard attacks = 0;
     for (int i = 0; i < 3; i++) {
-      attacks |= 0;
+      attacks |= valid_move(from, pawnmoves[i]);
+    }
+    attacks &= empty_or_enemy;
+    while (attacks) {
+      enum Square to = pop_lsb(&attacks);
+      append_move(create_move(from, to), moves);
+    }
+  }
+  while (pawns_on_two) {
+    enum Square from = pop_lsb(&pawns_on_two);
+    Bitboard attacks = 0;
+    for (int i = 0; i < 4; i++) {
+      attacks |= valid_move(from, pawnmoves[i]);
+    }
+    attacks &= empty_or_enemy;
+    while (attacks) {
+      enum Square to = pop_lsb(&attacks);
+      append_move(create_move(from, to), moves);
     }
   }
 }
 
-void generate_pseudo_legal_knight_moves(Bitboard empty_or_emeny,
+void generate_pseudo_legal_knight_moves(Bitboard empty_or_enemy,
                                         Bitboard knights, MoveList *moves) {
   while (knights) {
     enum Square from = pop_lsb(&knights);
@@ -56,13 +73,12 @@ void generate_pseudo_legal_knight_moves(Bitboard empty_or_emeny,
     for (int i = 0; i < 8; i++) {
       attacks |= valid_move(from, knightmoves[i]);
     }
-    attacks &= empty_or_emeny;
+    attacks &= empty_or_enemy;
     while (attacks) {
       enum Square to = pop_lsb(&attacks);
       append_move(create_move(from, to), moves);
     }
   }
-  printf("knight moves %d\n", moves->len);
 }
 
 void generate_pseudo_legal_king_moves(Bitboard empty_or_enemy, Bitboard king,
@@ -77,7 +93,6 @@ void generate_pseudo_legal_king_moves(Bitboard empty_or_enemy, Bitboard king,
     enum Square to = pop_lsb(&attacks);
     append_move(create_move(from, to), moves);
   }
-  printf("king moves %d\n", moves->len);
 }
 
 MoveList parse_move_list(char *moves) {
