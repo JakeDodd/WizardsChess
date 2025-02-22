@@ -10,6 +10,7 @@
 
 const int knightmoves[] = {-17, -15, -10, -6, 6, 10, 15, 17};
 const int kingmoves[] = {-9, -8, -7, -1, 1, 7, 8, 9};
+const int pawnmoves[] = {7, 8, 9, 16};
 
 void append_move(Move move, MoveList *move_list) {
   Move *new_moves = realloc(move_list->moves, move_list->len + 1);
@@ -33,7 +34,19 @@ Move create_move(enum Square from, enum Square to) { return to << 6 | from; }
 
 void generate_pseudo_legal_pawn_moves(GameState *gs, Bitboard pawns,
                                       Bitboard empty_or_enemy,
-                                      MoveList *moves) {}
+                                      MoveList *moves) {
+  enum rank second_r = gs->turn_to_move == WHITE ? R2 : R7;
+  int direction = gs->turn_to_move == WHITE ? 1 : -1;
+  Bitboard pawns_on_two = RANKS[second_r] & pawns;
+  pawns = pawns_on_two ^ pawns;
+  while (pawns) {
+    enum Square from = pop_lsb(&pawns);
+    Bitboard attacks = 0;
+    for (int i = 0; i < 3; i++) {
+      attacks |= 0;
+    }
+  }
+}
 
 void generate_pseudo_legal_knight_moves(Bitboard empty_or_emeny,
                                         Bitboard knights, MoveList *moves) {
@@ -81,11 +94,16 @@ MoveList parse_move_list(char *moves) {
     Move move = src | (dest << 6);
     append_move(move, &movelist);
   } while ((m = strtok(NULL, " ")) != NULL);
+  print_move_list(movelist);
   return movelist;
 }
 
 void print_move_list(MoveList movelist) {
   for (int i = 0; i < movelist.len; i++) {
+    int src = *(movelist.moves + i) & 0x003F;
+    int dest = *(movelist.moves + i) >> 6;
+    printf("%c%c%c%c\n", src % 8 + 97, src / 8 + 48, dest % 9 + 97,
+           dest / 8 + 48);
     printf("src sq: %d\n", *(movelist.moves + i) & 0x003F);
     printf("dest sq: %d\n", *(movelist.moves + i) >> 6);
   }
