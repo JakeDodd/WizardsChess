@@ -103,13 +103,16 @@ MoveList parse_move_list(char *moves) {
   movelist.len = 0;
   movelist.moves = NULL;
   char *m = strtok(cpy, " ");
-  do {
-    uint16_t src = sq_str(m);
-    uint16_t dest = sq_str(m + 2);
-    Move move = src | (dest << 6);
-    append_move(move, &movelist);
-  } while ((m = strtok(NULL, " ")) != NULL);
+  if (m != NULL) {
+    do {
+      uint16_t src = sq_str(m);
+      uint16_t dest = sq_str(m + 2);
+      Move move = src | (dest << 6);
+      append_move(move, &movelist);
+    } while ((m = strtok(NULL, " ")) != NULL);
+  }
   print_move_list(movelist);
+  free(cpy);
   return movelist;
 }
 
@@ -117,8 +120,8 @@ void print_move_list(MoveList movelist) {
   for (int i = 0; i < movelist.len; i++) {
     int src = *(movelist.moves + i) & 0x003F;
     int dest = *(movelist.moves + i) >> 6;
-    printf("%c%c%c%c\n", src % 8 + 97, src / 8 + 48, dest % 9 + 97,
-           dest / 8 + 48);
+    printf("%c%c%c%c\n", src % 8 + 96, src / 8 + 49, dest % 8 + 96,
+           dest / 8 + 49);
     printf("src sq: %d\n", *(movelist.moves + i) & 0x003F);
     printf("dest sq: %d\n", *(movelist.moves + i) >> 6);
   }
